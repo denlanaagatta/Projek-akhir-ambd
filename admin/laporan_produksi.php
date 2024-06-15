@@ -15,7 +15,7 @@ if(isset($_POST['submit'])){
 	}
 </style>
 <div class="container">
-	<h2 style=" width: 100%; border-bottom: 4px solid gray; padding-bottom: 5px;"><b>Laporan Produksi</b></h2>
+	<h2 style=" width: 100%; border-bottom: 4px solid gray; padding-bottom: 5px;"><b>Laporan Pesanan</b></h2>
 	<div class="row print">
 		<div class="col-md-9">
 			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
@@ -56,7 +56,7 @@ if(isset($_POST['submit'])){
 		</tr>
 		<?php 
 		if(isset($_POST['submit'])){
-		$result = mysqli_query($conn, "SELECT * FROM produksi WHERE terima = 1 and tanggal between '$date1' and '$date2'");
+		$result = mysqli_query($conn, "SELECT * FROM pesanan WHERE terima = 1 and tanggal between '$date1' and '$date2'");
 		$no=1;
 		$total = 0;
 		while ($row = mysqli_fetch_assoc($result)) {
@@ -86,7 +86,3 @@ if(isset($_POST['submit'])){
 <br>
 <br>
 
-
-<?php 
-include 'footer.php';
-?>

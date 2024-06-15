@@ -1,4 +1,4 @@
-<?php 
+<?php
 include '../koneksi/koneksi.php';
 
 $hal = $_GET['hal'];
@@ -7,7 +7,6 @@ $kode_produk = $_GET['produk'];
 if(isset($_GET['jml'])){
 	$qty = $_GET['jml'];
 }
-
 
 $result = mysqli_query($conn, "SELECT * FROM produk WHERE kode_produk = '$kode_produk'");
 $row = mysqli_fetch_assoc($result);
@@ -33,9 +32,11 @@ if($hal == 1){
 			die;
 		}
 	}else{
-
-		$insert = mysqli_query($conn, "INSERT INTO keranjang VALUES('','$kode_cs','$kd','$nama_produk', '1', '$harga')");
-		if($insert){
+		// Gunakan prepared statement untuk INSERT
+		$insert = mysqli_prepare($conn, "INSERT INTO keranjang (kode_customer, kode_produk, nama_produk, qty, harga) VALUES (?, ?, ?, 1, ?)");
+		mysqli_stmt_bind_param($insert, "sssi", $kode_cs, $kd, $nama_produk, $harga);
+		
+		if(mysqli_stmt_execute($insert)){
 			echo "
 			<script>
 			alert('BERHASIL DITAMBAHKAN KE KERANJANG');
@@ -43,11 +44,14 @@ if($hal == 1){
 			</script>
 			";
 			die;
+		} else {
+			echo "Gagal menambahkan ke keranjang: " . mysqli_error($conn);
 		}
+
+		mysqli_stmt_close($insert);
 	}
 
-
-}else{
+} else {
 	$cek = mysqli_query($conn, "SELECT * from keranjang where kode_produk = '$kode_produk' and kode_customer = '$kode_cs'");
 	$jml = mysqli_num_rows($cek);
 	$row1 = mysqli_fetch_assoc($cek);
@@ -64,9 +68,11 @@ if($hal == 1){
 			die;
 		}
 	}else{
-
-		$insert = mysqli_query($conn, "INSERT INTO keranjang VALUES('','$kode_cs','$kd','$nama_produk', '$qty', '$harga')");
-		if($insert){
+		// Gunakan prepared statement untuk INSERT
+		$insert = mysqli_prepare($conn, "INSERT INTO keranjang (kode_customer, kode_produk, nama_produk, qty, harga) VALUES (?, ?, ?, ?, ?)");
+		mysqli_stmt_bind_param($insert, "sssii", $kode_cs, $kd, $nama_produk, $qty, $harga);
+		
+		if(mysqli_stmt_execute($insert)){
 			echo "
 			<script>
 			alert('BERHASIL DITAMBAHKAN KE KERANJANG');
@@ -74,16 +80,13 @@ if($hal == 1){
 			</script>
 			";
 			die;
+		} else {
+			echo "Gagal menambahkan ke keranjang: " . mysqli_error($conn);
 		}
 
+		mysqli_stmt_close($insert);
 	}
-
-
-
-
-
-
 }
 
-
+mysqli_close($conn);
 ?>

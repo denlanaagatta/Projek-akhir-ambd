@@ -2,35 +2,39 @@
 session_start();
 include '../koneksi/koneksi.php';
 
-$username = $_POST['username'];
-$password = $_POST['pass'];
+// Escape input pengguna untuk mencegah SQL Injection
+$username = mysqli_real_escape_string($conn, $_POST['username']);
+$password = mysqli_real_escape_string($conn, $_POST['pass']);
 
-$cek = mysqli_query($conn, "SELECT * FROM customer where username = '$username'");
-$jml = mysqli_num_rows($cek);
-$row = mysqli_fetch_assoc($cek);
+// Jalankan query untuk mendapatkan data pengguna berdasarkan username
+$query = "SELECT * FROM customer WHERE username = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $username);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-if($jml ==1){
-	if(password_verify($password, $row['password'])){
-		$_SESSION['user'] = $row['nama'];
-		$_SESSION['kd_cs'] = $row['kode_customer'];
-		header('location:../index.php');
-	}else{
-		echo "
-		<script>
-		alert('USERNAME/PASSWORD SALAH');
-		window.location = '../user_login.php';
-		</script>
-		";
-		die;
-	}
-}else{
-	echo "
-	<script>
-	alert('USERNAME/PASSWORD SALAH');
-	window.location = '../user_login.php';
-	</script>
-	";
-	die;
+// Periksa apakah pengguna ditemukan
+if (mysqli_num_rows($result) == 1) {
+    $row = mysqli_fetch_assoc($result);
+    // Verifikasi password
+    if (password_verify($password, $row['password'])) {
+        // Password cocok, buat sesi dan arahkan ke halaman utama
+        $_SESSION['user'] = $row['nama'];
+        $_SESSION['kd_cs'] = $row['kode_customer'];
+        header('Location: ../index.php');
+        exit();
+    } else {
+        // Password tidak cocok
+        echo "<script>alert('Username atau password salah'); window.location='../user_login.php';</script>";
+        exit();
+    }
+} else {
+    // Username tidak ditemukan
+    echo "<script>alert('Username atau password salah'); window.location='../user_login.php';</script>";
+    exit();
 }
 
+// Tutup statement dan koneksi
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
 ?>

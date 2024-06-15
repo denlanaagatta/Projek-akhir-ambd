@@ -50,7 +50,7 @@ if(isset($_POST['submit'])){
 	<table class="table table-striped">
 		<tr>
 			<th>No</th>
-			<th>Invoice</th>
+			<th>ID Order</th>
 			<th>Nama Produk</th>
 			<th>Harga</th>
 			<th>qty</th>
@@ -59,14 +59,14 @@ if(isset($_POST['submit'])){
 		</tr>
 		<?php 
 		if(isset($_POST['submit'])){
-			$result = mysqli_query($conn, "SELECT * FROM produksi WHERE terima = 1 and tanggal between '$date1' and '$date2'");
+			$result = mysqli_query($conn, "SELECT * FROM pesanan WHERE terima = 1 and tanggal between '$date1' and '$date2'");
 			$no=1;
 			$total = 0;
 			while ($row = mysqli_fetch_assoc($result)) {
 				?>
 				<tr>
 					<td><?= $no; ?></td>
-					<td><?= $row['invoice']; ?></td>
+					<td><?= $row['id_order']; ?></td>
 					<td><?= $row['nama_produk']; ?></td>
 					<td><?=  number_format($row['harga']); ?></td>
 					<td><?= $row['qty']; ?></td>
@@ -92,7 +92,3 @@ if(isset($_POST['submit'])){
 <br>
 <br>
 
-
-<?php 
-include 'footer.php';
-?>

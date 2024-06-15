@@ -47,44 +47,6 @@
 	</table>
 
 
-	<h4><b>Pemotongan dengan Biaya Bahan Baku</b></h4>
-		<table class="table table-striped">
-			<tr>
-				<th>No</th>
-				<th>Nama Bahan Baku</th>
-				<th>Harga</th>
-				<th>Kebutuhan</th>
-				<th>Subtotal</th>
-			</tr>
-			<?php 
-			$result = mysqli_query($conn, "SELECT * FROM produksi WHERE terima = 1 and tanggal between '$date1' and '$date2'");
-			$no1=1;
-			$totalb = 0;
-			while ($row = mysqli_fetch_assoc($result)) {
-				$kd = $row['kode_produk'];
-				$bahan = mysqli_query($conn, "SELECT b.kebutuhan as kebutuhan, i.nama as nama, i.harga as harga from bom_produk b join inventory i on b.kode_bk=i.kode_bk WHERE b.kode_produk = '$kd'");
-				while ($row1 = mysqli_fetch_assoc($bahan)) {
-					?>
-					<tr>
-						<td><?= $no1; ?></td>
-						<td><?= $row1['nama']; ?></td>
-						<td><?= $row1['harga']; ?></td>
-						<td><?= $row1['kebutuhan']; ?></td>
-						<td><?= number_format($row1['harga']*$row1['kebutuhan']); ?></td>
-					</tr>
-					<?php 
-					$totalb += $row1['harga']*$row1['kebutuhan'];
-					$no1++;
-				}
-			}
-		?>
-		<tr>
-			<td colspan="7" class="text-right"><b>Total Biaya Bahan Baku = <?= number_format($totalb); ?></b></td>
-		</tr>
-		<tr>
-			<td colspan="7" class="text-right bg-success" style="color: green;"><b>TOTAL PENDAPATAN BERSIH = <?= number_format($total-$totalb); ?></b></td>
-		</tr>
-	</table>
 
 </body>
 </html>

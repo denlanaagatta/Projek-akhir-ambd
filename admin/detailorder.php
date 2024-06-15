@@ -1,10 +1,10 @@
 <?php 
 include 'header.php';
 $invoices = $_GET['inv'];
-$d_order = mysqli_query($conn, "SELECT * FROM produksi WHERE invoice = '$invoices'");
+$d_order = mysqli_query($conn, "SELECT * FROM pesanan WHERE invoice = '$invoices'");
 $t_order = mysqli_fetch_assoc($d_order);
 
-$sortage = mysqli_query($conn, "SELECT * FROM produksi where cek = '1'");
+$sortage = mysqli_query($conn, "SELECT * FROM pesanan where cek = '1'");
 $cek_sor = mysqli_num_rows($sortage);
 
 // customer
@@ -31,7 +31,8 @@ $t_cs = mysqli_fetch_assoc($cs);
 		<tbody>
 
 			<?php 
-			$result = mysqli_query($conn, "SELECT DISTINCT invoice, kode_customer, status, kode_produk, qty,terima,tolak, cek FROM produksi group by invoice");
+			$result = mysqli_query($conn, "SELECT invoice, kode_customer, MAX(status) as status, MAX(kode_produk) as kode_produk, MAX(qty) as qty, MAX(terima) as terima, MAX(tolak) as tolak, MAX(cek) as cek, MAX(tanggal) as tanggal FROM pesanan GROUP BY invoice, kode_customer");
+
 			$no = 1;
 			$array = 0;
 			while($row = mysqli_fetch_assoc($result)){
@@ -56,33 +57,25 @@ $t_cs = mysqli_fetch_assoc($cs);
 								<td style="color: orange;font-weight: bold;"><?= $row['status']; ?>
 								<?php 
 							}
-							$t_bom = mysqli_query($conn, "SELECT * FROM bom_produk WHERE kode_produk = '$kodep'");
+							$kodebk = 'M' . substr($kodep, 1, 4);
+							$inventory = mysqli_query($conn, "SELECT * FROM inventory WHERE kode_bk = '$kodebk'");
+							$r_inv = mysqli_fetch_assoc($inventory);
+							$qtyorder = $row['qty'];
+							$inventory = $r_inv['qty'];
 
-							while($row1 = mysqli_fetch_assoc($t_bom)){
-								$kodebk = $row1['kode_bk'];
-
-								$inventory = mysqli_query($conn, "SELECT * FROM inventory WHERE kode_bk = '$kodebk'");
-								$r_inv = mysqli_fetch_assoc($inventory);
-
-								$kebutuhan = $row1['kebutuhan'];	
-								$qtyorder = $row['qty'];
-								$inventory = $r_inv['qty'];
-
-								$bom = ($kebutuhan * $qtyorder);
-								$hasil = $inventory - $bom;
-								if($hasil < 0 && $row['tolak'] == 0){
-									mysqli_query($conn, "UPDATE produksi SET cek = '1' where invoice = '$inv'");
-										$nama_material[] = $r_inv['nama'];
-									?>
+							$hasil = $inventory - $qtyorder;
+							if($hasil < 0 && $row['tolak'] == 0){
+								mysqli_query($conn, "UPDATE pesanan SET cek = '1' where invoice = '$inv'");
+									$nama_material[] = $r_inv['nama'];
+								?>
 
 
 
-									<?php 
-								}
+								<?php 
 							}
 							?>
 						</td>
-						<td>2020/26-01</td>
+						<td><?= $row['tanggal'] ?></td>
 						<td>
 							<?php if( $row['tolak']==0 && $row['cek']==1 && $row['terima']==0){ ?>
 								<a href="inventory.php?cek=0" id="rq" class="btn btn-warning"><i class="glyphicon glyphicon-warning-sign"></i> Request Material Shortage</a> 
@@ -152,7 +145,7 @@ $t_cs = mysqli_fetch_assoc($cs);
 							<th>Subtotal</th>
 						</tr>
 					<?php 
-						$order = mysqli_query($conn, "SELECT * FROM produksi WHERE invoice = '$invoices'");
+						$order = mysqli_query($conn, "SELECT * FROM pesanan WHERE invoice = '$invoices'");
 						$no = 1;
 						$grand = 0;
 						while ($list = mysqli_fetch_assoc($order)) {
@@ -231,7 +224,3 @@ if($cek_sor > 0){
 		$( "#btn" ).click();
 	});
 </script>
-
-	<?php 
-	include 'footer.php';
-	?>

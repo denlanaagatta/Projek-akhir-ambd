@@ -27,18 +27,19 @@ $konfirmasi = $_POST['konfirmasi'];
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 if($password == $konfirmasi){
-	$cek = mysqli_query($conn, "SELECT username from customer where username = '$username'");;
-	$jml = mysqli_num_rows($cek);
+    $cek = mysqli_query($conn, "SELECT username FROM customer WHERE username = '$username'");
+    $jml = mysqli_num_rows($cek);
 
-	if($jml == 1){
-		echo "
-		<script>
-		alert('USERNAME SUDAH DIGUNAKAN');
-		window.location = '../register.php';
-		</script>
-		";
-		die;
-	}
+    if($jml == 1){
+        // Jika username sudah ada, beri pesan kepada pengguna
+        echo "
+        <script>
+        alert('Username sudah dipakai. Harap gunakan username lain.');
+        window.location = '../register.php';
+        </script>
+        ";
+        die; // Menghentikan eksekusi script selanjutnya
+    }
 
 	$result = mysqli_query($conn, "INSERT INTO customer VALUES('$format','$nama', '$email', '$username', '$hash', '$tlp')");
 	if($result){

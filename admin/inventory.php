@@ -3,7 +3,7 @@ include 'header.php';
 
 if(isset($_GET['cek'])){
 	$cek = $_GET['cek'];
-	mysqli_query($conn, "UPDATE produksi SET cek = '$cek'");
+	mysqli_query($conn, "UPDATE pesanan SET cek = '$cek'");
 }
 
 if(isset($_GET['page'])){
@@ -19,17 +19,36 @@ if(isset($_GET['page'])){
 		";
 	}
 }
+if (isset($_GET['kode'])) {
+    $p_kode_bk = $_GET['kode'];
+    $p_id_bk = '';
+    $p_nama_barang = '';
+    $p_qty = 0;
+    $p_satuan = '';
 
+    $stmt = mysqli_prepare($conn, "CALL GetInventoryByCode(?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, 'sssis', $p_kode_bk, $p_id_bk, $p_nama_barang, $p_qty, $p_satuan);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $p_kode_bk, $p_id_bk, $p_nama_barang, $p_qty, $p_satuan);
+    mysqli_stmt_fetch($stmt);
+    mysqli_stmt_close($stmt);
+	
+    echo "Kode BK: $p_kode_bk<br>";
+    echo "ID BK: $p_id_bk<br>";
+    echo "Nama Barang: $p_nama_barang<br>";
+    echo "Qty: $p_qty<br>";
+    echo "Satuan: $p_satuan<br>";
+}
 ?>
 
 
 <div class="container">
-	<h2 style=" width: 100%; border-bottom: 4px solid gray"><b>Inventory Material</b></h2>
+	<h2 style=" width: 100%; border-bottom: 4px solid gray"><b>Stok Gudang</b></h2>
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th scope="col">No</th>
-				<th scope="col">Kode Matrial</th>
+				<th scope="col">Kode Stok</th>
 				<th scope="col">Nama</th>
 				<th scope="col">Stok</th>
 				<th scope="col">Satuan</th>
@@ -38,11 +57,11 @@ if(isset($_GET['page'])){
 			</tr>
 		</thead>
 		<tbody>
-			<?php 
-			$result = mysqli_query($conn, "SELECT * FROM inventory order by kode_bk asc");
-			$no =1;
-			while ($row = mysqli_fetch_assoc($result)) {
-				?>
+		<?php 
+            $result = mysqli_query($conn, "SELECT * FROM v_inventory");
+            $no = 1;
+            while ($row = mysqli_fetch_assoc($result)) {
+                ?>
 				<tr>
 
 					<th scope="row"><?php echo $no; ?></th>
@@ -93,7 +112,3 @@ if(isset($_GET['page'])){
 <br>
 <br>
 <br>
-
-<?php 
-include 'footer.php';
-?>

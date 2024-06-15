@@ -4,7 +4,19 @@ if(isset($_POST['submit1'])){
 	$id_keranjang = $_POST['id'];
 	$qty = $_POST['qty'];
 
-	$edit = mysqli_query($conn, "UPDATE keranjang SET qty = '$qty' where id_keranjang = '$id_keranjang'");
+
+    // Validasi jika qty <= 0
+    if($qty <= 0) {
+        echo "
+        <script>
+        alert('Mohon tentukan produk yang ingin dibeli dengan benar.');
+        window.location = 'keranjang.php';
+        </script>
+        ";
+        exit; // Keluar dari skrip agar tidak melakukan update
+    }
+
+	$edit = mysqli_query($conn, "UPDATE keranjang SET qty = '$qty' WHERE id_keranjang = '$id_keranjang'");
 	if($edit){
 			echo "
 		<script>
@@ -30,7 +42,7 @@ if(isset($_POST['submit1'])){
 
 
 <div class="container" style="padding-bottom: 300px;">
-	<h2 style=" width: 100%; border-bottom: 4px solid #ff8680"><b>Keranjang</b></h2>
+	<h2 style=" width: 100%; border-bottom: 4px solid #518EEE"><b>Keranjang</b></h2>
 		<table class="table table-striped">
 			<?php 
 			if(isset($_SESSION['user'])){

@@ -1,7 +1,7 @@
 <?php 
 include '../../koneksi/koneksi.php';
 $inv = $_GET['inv'];
-$tolak = mysqli_query($conn, "UPDATE produksi set tolak = '1', terima='2' WHERE invoice = '$inv'");
+$tolak = mysqli_query($conn, "UPDATE pesanan set tolak = '1', terima='2' WHERE invoice = '$inv'");
 
 if($tolak){
 	echo "

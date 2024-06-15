@@ -56,7 +56,7 @@ if(isset($_POST['submit'])){
 		</tr>
 		<?php 
 		if(isset($_POST['submit'])){
-		$result = mysqli_query($conn, "SELECT * FROM produksi WHERE tolak = 1 and tanggal between '$date1' and '$date2'");
+		$result = mysqli_query($conn, "SELECT * FROM pesanan WHERE tolak = 1 and tanggal between '$date1' and '$date2'");
 		$no=1;
 		$total = 0;
 		while ($row = mysqli_fetch_assoc($result)) {
@@ -86,7 +86,3 @@ if(isset($_POST['submit'])){
 <br>
 <br>
 
-
-<?php 
-include 'footer.php';
-?>

@@ -32,7 +32,7 @@ if(isset($_GET['page'])){
 		</thead>
 		<tbody>
 			<?php 
-			$result = mysqli_query($conn, "SELECT * FROM customer order by kode_customer asc");
+			$result = mysqli_query($conn, "SELECT * FROM view_customer order by kode_customer asc");
 			$no =1;
 			while ($row = mysqli_fetch_assoc($result)) {
 				?>
@@ -85,6 +85,3 @@ if(isset($_GET['page'])){
 <br>
 <br>
 
-<?php 
-include 'footer.php';
-?>
