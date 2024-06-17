@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect("152.67.198.76", "220441100118", "Pw@22118", "DB220441100118");
+$conn = mysqli_connect("root", "localhost", "", "toko_sovenir");
 if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
